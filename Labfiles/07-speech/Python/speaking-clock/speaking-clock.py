@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 
 # Import namespaces
+import azure.cognitiveservices.speech as speech_sdk
 
 
 def main():
@@ -15,6 +16,7 @@ def main():
         ai_region = os.getenv('SPEECH_REGION')
 
         # Configure speech service
+        speech_config = speech_sdk.SpeechConfig(ai_key, ai_region)
         
 
         # Get spoken input
@@ -29,9 +31,15 @@ def TranscribeCommand():
     command = ''
 
     # Configure speech recognition
+    audio_config = speech_sdk.AudioConfig(use_default_microphone=true)
+    speech_recognizer = speech_sdk.SpeechRecognizer(speech_config, audio_config)
 
 
     # Process speech input
+    speech = speech_recognizer.recognize_once_async().get()
+    if speech.reason == speech.sdk.ResultReason.RecognizedSpeech:
+        command = speech.text
+        print(command)
 
 
     # Return the command
@@ -44,9 +52,15 @@ def TellTime():
 
 
     # Configure speech synthesis
+    speech_config.speech_synthesis_voice_name = "en-GB-RyanNeural"
+    speech_synthesizer = speech_sdk.SpeechSynthesizer(speech_config)
     
 
     # Synthesize spoken output
+    speak = speech_synthesizer.speak_text_async(response_text).get()
+    if speak.reason != speech_sdk.ResultReason.SynthesizingAudioCompleted:
+        print(speak.reason)
+
 
 
     # Print the response
